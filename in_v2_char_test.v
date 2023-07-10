@@ -26,30 +26,27 @@ module in_v2_char_test();
     reg CLK,KEY;
     wire [19:0] v1new, u1new;
     wire spike;
-    reg signed [19:0] ecg[999:0];
-    reg signed[19:0] I_ecg;
-    wire en = 1;
     wire wea = 0;
-    wire [19:0] out,in;
-    reg [10:0] addra = 11'sh003;
+    wire [19:0] out;
+    reg [11:0] addra;
 
-    reg [9:0] k;
-    initial $readmemh("C:/Users/KRISHNA/Desktop/study material/ECG/samples/normal.txt",ecg);
+    blk_mem_gen_0 a1(.clka(CLK),.wea(wea),.addra(addra),.douta(out));
 
-
-    IN_V2_Char N1(CLK,KEY,I_ecg,v1new,u1new,spike);
+    IN_V2_Char N1(CLK,KEY,out,v1new,u1new,spike);
 
     initial begin 
-        KEY = 0; CLK = 0; I_ecg = 1'b0; k = 0;
+        KEY = 0; CLK = 0;addra=0;
         #10 KEY = 1;
         #10 KEY = 0; 
     end
 
     always#(1)begin
         CLK = ~CLK;
-        I_ecg = ecg[k];
-        k = k + 10'b1;
     end
+    always@(posedge CLK)begin
+        assign addra = addra + 12'b1;
+    end
+
 
 endmodule
 

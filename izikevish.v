@@ -1,8 +1,8 @@
 `timescale 1ns / 1ps
 
-module IN_V2_Char(clk,reset,i,v1new,u1new,spike);
+module IN_V2_Char(clk,reset,I,v1new,u1new,spike);
 	output signed [19:0] v1new, u1new;
-	input signed [19:0] i;
+	input signed [19:0] I;
 	input clk,reset;
 	output spike;
 
@@ -10,9 +10,7 @@ module IN_V2_Char(clk,reset,i,v1new,u1new,spike);
 	reg signed [19:0] a,b,c,d ;	//the control parameters
 	reg signed [19:0] p ;		//peak overshoot
 	reg signed [19:0] c14 ;     // constants
-	wire signed [19:0] v1xv1, du, v1xb, ureset;   //signed mult outputs\
-	// ? new variable
-	wire signed [19:0] I;   
+	wire signed [19:0] v1xv1, du, v1xb, ureset;   //signed mult outputs\ 
 	reg spike;
 
 	always@(posedge reset)
@@ -25,7 +23,6 @@ module IN_V2_Char(clk,reset,i,v1new,u1new,spike);
 		d <= 20'sh0_051E ; // 0.08
 		p <= 20'sh0_4CCC ; // 0.30
 		c14 <= 20'sh1_6666; // 1.4
-		//I <= 18'sh0_2666 ;  // 0.10
 	end
 
 	always @(posedge clk)
@@ -41,7 +38,6 @@ module IN_V2_Char(clk,reset,i,v1new,u1new,spike);
 			spike=0;
 		end
 	end
-	assign I = i < 0 ? -1 * i : i;
 
 	// dt = 1/16 or 2>>4
 	// v1(n+1) = v1(n) + dt*(4*(v1(n)^2) + 5*v1(n) +1.40 - u1(n) + I)
