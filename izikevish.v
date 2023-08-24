@@ -1,14 +1,14 @@
 `timescale 1ns / 1ps
 
-module IN_V2_Char(clk,reset,I,v1new,u1new,spike);
+module IN_V2_Char(clk,reset,I,v1new,u1new,spike,p);
 	output signed [19:0] v1new, u1new;
 	input signed [19:0] I;
+	input signed [19:0] p ;		//peak overshoot
 	input clk,reset;
 	output spike;
 
 	reg signed [19:0] v1, u1 ;
 	reg signed [19:0] a,b,c,d ;	//the control parameters
-	reg signed [19:0] p ;		//peak overshoot
 	reg signed [19:0] c14 ;     // constants
 	wire signed [19:0] v1xv1, du, v1xb, ureset;   //signed mult outputs\ 
 	reg spike;
@@ -21,7 +21,6 @@ module IN_V2_Char(clk,reset,I,v1new,u1new,spike);
 		b <= 20'sh0_3333 ; // ? 0.2
 		c <= 20'shF_599A ; // ? -0.65
 		d <= 20'sh0_051E ; // ? 2
-		p <= 20'sh0_0000 ; // ? 0
 		c14 <= 20'sh1_6666; // 1.4
 	end
 
