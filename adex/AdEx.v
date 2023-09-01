@@ -21,17 +21,17 @@
 // 7,16,20,13,9,14,23'sh0_7828_4,23'shF_EE14_8,38'sh0_0000_0003_A // adaptive
 
 
-module AdEx#(
-   parameter a1=7,a2 = 16,b1=3,b2=3,c=9,d=10,
+module AdEx#(parameter a1=7,a2 = 16,b1=3,b2=3,c=9,d=10,
    parameter signed W_init = 23'sh0_0780_3,
    parameter signed EL = 23'shF_EDED_3, // EL = 23'shF_EDED_3
    parameter signed exp_init = 38'sh0_0000_0002_B
-)
-   (input clk,rst,input signed [N-1:0]I,
+)(
+   input clk,rst,
+   input signed [N-1:0]I,
    output reg spikes
 ); 
 
-   //exp_init = 38'sh0_0000_0002_B
+   // ? exp_init = 38'sh0_0000_0002_B
    localparam N = 23;  // no of bits for varaibles 
    localparam i = 3;   // no of integer bits in 'N'
    localparam Ne = 38; // no of bits for varaible exp
@@ -51,7 +51,7 @@ module AdEx#(
 
    mult1 #(N,i,Ndv) M1(dv,dv_by_dt_sqa);
    mult2 #(Ne,ie,Ndv,idv) M2(exp,exp_mul_mux,update_exp);
-   
+ 
    assign dv = V - VP;
    assign dv_by_dt = {dv_sign_ext,dv[N-2:0]}<<<c;     
    // ? dv_by_dt = {dv[N-1],6'b0,dv[N-2:0]}<<<c;
@@ -96,7 +96,8 @@ module AdEx#(
 
 endmodule
 
-// ? out = 0.5*(dv/dt)^2 
+
+//?  out = 0.5*(dv/dt)^2 
 module mult1 #(parameter N1=23,i1=3,N2=29)(
    input signed [N1-1:0]IN,
    output signed [N2-1:0]out
@@ -104,11 +105,13 @@ module mult1 #(parameter N1=23,i1=3,N2=29)(
    wire signed [(2*N1)-1:0]P;
    assign P = IN*IN;
    assign out = (|P[(2*N1)-3:N1-i1+11])?{P[(2*N1)-1],28'h7F_FFFF_F}:{P[(2*N1)-1],P[(2*N1)-1],P[(2*N1)-1],P[(2*N1)-1],P[(2*N1)-1],P[(2*N1)-3:N1-i1]}<<<17; 
-   // ? {P[(2*N1)-1],(i2-2*i1+1)'b0,P[(2*N1)-3:N1-i1]}/(2*dt^2); /// (2*dt^2) = 2^-17  
-   // ? {P[(2*N1)-1],4'b0,P[(2*N1)-3:N1-i1]}<<<17
+   // ? {P[(2*N1)-1],(i2-2*i1+1)'b0,P[(2*N1)-3:N1-i1]}/(2*dt^2); 
+   // ? (2*dt^2) = 2^-17  ///
 endmodule                                                       
+// ? {P[(2*N1)-1],4'b0,P[(2*N1)-3:N1-i1]}<<<17
 
-// ? out = exp*(1 + (dv/dt) + 0.5*(dv/dt)^2); //////
+
+// ? out = exp*(1 + (dv/dt) + 0.5*(dv/dt)^2); 
 module mult2 #(parameter N1=38,i1=18,N2=29,i2=9)(
    input signed [N1-1:0]IN1,
    input signed [N2-1:0]IN2,
@@ -117,5 +120,5 @@ module mult2 #(parameter N1=38,i1=18,N2=29,i2=9)(
    wire signed [(N1+N2)-1:0]P;
    assign P = IN1*IN2;
    assign out = (|P[N1+N2-3:(N1+N2)-(i2+2)+1])?{P[(N1+N2)-1],37'h1FFFF_FFFF_F}:{P[(N1+N2)-1],P[(N1+N2)-(i2+2):N2-i2]};  
-   // ? out = exp*(1 + (dv/dt) + 0.5*(dv/dt)^2); N1+N2-3:(N1+N2)-(i2+2)+1
+   // ?  out = exp*(1 + (dv/dt) + 0.5*(dv/dt)^2); N1+N2-3:(N1+N2)-(i2+2)+1
 endmodule
