@@ -1,0 +1,13 @@
+-0.01 - 20'shF_FD71
+-0.02 - 20'shF_FAE2
+-0.05 - 20'shF_F334
+-0.8  - 20'shF_3333
+-0.74 - 20'shF_428F
+-0.7  - 20'shF_4CCD
+
+0.32 - 51EB
+0.33 - 547A
+0.34 - 570A
+0.345 - 5851
+
+232 reference beat, rhythm, and signal quality annotations (atr)
