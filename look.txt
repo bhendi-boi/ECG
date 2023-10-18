@@ -9,5 +9,14 @@
 0.33 - 547A
 0.34 - 570A
 0.345 - 5851
+0.36 - 5C28
+0.365 - 5D70
+0.37 - 5EB8
+0.378 - 60C4
+0.38 - 6147
+0.39 - 63D7
+0.4 - 6666
+0.45 - 7333
+0.5 - 8000
 
 232 reference beat, rhythm, and signal quality annotations (atr)
