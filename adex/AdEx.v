@@ -23,16 +23,18 @@
 
 module AdEx#(parameter a1=7,a2 = 16,b1=3,b2=3,c=9,d=10,
    parameter signed W_init = 23'sh0_0780_3,
-   parameter signed EL = 23'shF_EDED_3, // EL = 23'shF_EDED_3
-   parameter signed exp_init = 38'sh0_0000_0002_B
+   parameter signed EL = 23'sh7_EDED_3, // EL = 23'shF_EDED_3
+   parameter signed exp_init = 38'sh0_0000_0002_B,
+   localparam N = 23  // no of bits for varaibles
 )(
    input clk,rst,
    input signed [N-1:0]I,
-   output reg spikes
+   output reg spikes,
+   output reg signed [N-1:0] V
 ); 
 
    // ? exp_init = 38'sh0_0000_0002_B
-   localparam N = 23;  // no of bits for varaibles 
+    
    localparam i = 3;   // no of integer bits in 'N'
    localparam Ne = 38; // no of bits for varaible exp
    localparam ie = 18; // no of integer bits in 'Ne'
@@ -40,12 +42,14 @@ module AdEx#(parameter a1=7,a2 = 16,b1=3,b2=3,c=9,d=10,
    localparam idv = 9;
    localparam signed one = 29'sh001_0000_0;
 
+   reg [2:0] s;
    reg signed [Ne-1:0] exp;
    wire signed [Ne-1:0] update_exp,shifted_exp;
-   reg signed [N-1:0] V,W,VP;
+   reg signed [N-1:0] W,VP;
    wire signed [N-1:0] dv,E;
    wire signed [Ndv-1:0] dv_by_dt,dv_by_dt_sqa,exp_mul,exp_mul_mux;
    reg [6:0] dv_sign_ext;
+   //reg [N-1:0]p = 
 
 
 
@@ -62,19 +66,21 @@ module AdEx#(parameter a1=7,a2 = 16,b1=3,b2=3,c=9,d=10,
    // ? assign I = (I_ecg[22])?((~I_ecg)+1):I_ecg;
 
    always@(*) begin 
-      for(int i = 0;i<7;i=i+1) begin 
-         dv_sign_ext[i] = dv[N-1];
+      for(s= 0;s<7;s= s+1) begin 
+         dv_sign_ext[s] = dv[N-1];
       end
    end
+  
 
    always@(posedge clk,negedge rst) begin 
-      if(!rst) begin
+      if(!rst) 
+      begin
             V <= EL;
             W <= W_init;
             exp <= exp_init;
             VP <= EL;
             spikes <= 0;
-         end
+       end
       else begin 
          if(!V[N-1]) begin 
             V <= EL;
@@ -83,15 +89,23 @@ module AdEx#(parameter a1=7,a2 = 16,b1=3,b2=3,c=9,d=10,
             VP <= EL;
             spikes <= 1;
             // count = count + 1;   // To track of no of spikes fired
-         end
+            end
          else begin 
             VP <= V;
             V <= V - ((V - EL)>>>a1) + E + (I) - (W>>>d);
             W <= W  + ((V - EL)>>>b1) - (W>>>b2); //
             exp <= update_exp;
             spikes <= 0;
+             end
          end
-         end
+     //  else begin
+     //  if(p>=N) begin
+      //  spikes <= 1;
+      //  end
+      // elsebegin
+      // spikes <= 0;
+      // end
+     //  end
    end
 
 endmodule
